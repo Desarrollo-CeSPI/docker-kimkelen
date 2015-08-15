@@ -13,6 +13,29 @@ curl -sSL https://get.docker.com/ | sh
 Para otros sistemas verificar la [Guía de instalación de
 Docker](https://docs.docker.com/installation/)
 
+## Probando kimkelen
+
+Si no se quiere leer todo este README y simplemente probar kimkelen rápidamente:
+
+###Iniciamos un contenedor con MySQL:
+
+```
+docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=kimkelen -e MYSQL_USER=kimkelen \
+  -e MYSQL_PASSWORD=kimpass -d mysql:5.5
+```
+
+### Iniciamos un contenedor con kimkelen ligado al MySQL creado
+
+```
+docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
+  -e DB_PASS=kimpass -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
+  -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql  \
+  -p 8000:80  -it cespi/kimkelen
+```
+
+Luego accceder http://localhost:8000
+
 ## Instalar el contenedor de kimkelen
 
 Correr por única vez:
@@ -69,7 +92,7 @@ docker run \
     -v /tmp/kimkelen/codigo:/code \
     -v /tmp/kimkelen/data:/data \
     -p 8000:80 \
-    -it
+    -it \
     cespi/kimkelen --reinstall
 ``` 
 
@@ -86,6 +109,42 @@ un nuevo contenedor que solo actualizará los mismos volumenes que utiliza el
 contenedor kimkelen. 
 
 Al utilizar `--reinstall` *no se inicia el web server*
+
+## Usar mysql en un contenedor
+
+Podemos correr mysql en un contenedor de la siguiente forma 
+
+```
+docker run \
+  --name=mysql-kimkelen \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=kimkelen \
+  -e MYSQL_USER=kimkelen \
+  -e MYSQL_PASSWORD=kimpass \
+  -d mysql:5.5 
+```
+
+Una vez corriendo, debemos iniciar nuestra instancia de kimkelen de esta forma:
+
+```
+docker run \
+    -e USER_ID=`id -u` \
+    -e DB_NAME=kimkelen \
+    -e DB_USER=kimkelen \
+    -e DB_PASS=kimpass \
+    -e DB_HOST=mysql \
+    -v /tmp/kimkelen/codigo:/code \
+    -v /tmp/kimkelen/data:/data \
+    --name=kimkelen \
+    --link mysql-kimkelen:mysql \
+    -p 8000:80 \
+    -it \
+    cespi/kimkelen
+```
+
+
+*Si ya estaba existe un contenedor docker con el nombre kimkelen, deberá antes
+pararlo y eliminarlo: `docker stop kimkelen && docker rm kimkelen`*
 
 
 ## Iniciar y parar el contenedor
