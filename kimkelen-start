@@ -1,0 +1,115 @@
+#!/bin/bash
+set -e
+
+CODE=/code/$GIT_REVISION
+DATA=/data
+DEFAULT_CONFIGS=/default_configs
+PHP_CMD="php -dmemory_limit=512M"
+USER=www-data
+SHARED_DIRS="log web/uploads data/persons-photos data/justification-documents data/disciplinary-sanction-documents"
+SHARED_FILES="config/propel.ini config/databases.yml config/nc_flavor.yml"
+FLAVOR=${FLAVOR:-demo}
+DB_NAME=kimkelen_docker
+DB_HOST=`ip route | awk '/default/ { print  $3}'`
+DB_USER=root
+DB_PASS=""
+
+PHP() {
+  gosu $USER $PHP_CMD $*
+}
+
+ln -fs $CODE /code/current
+ln -fs /data/php.ini /usr/local/etc/php/php.ini
+ln -fs /code/current/web /var/www/html/kimkelen
+sed -i.bak 's@DocumentRoot .*@DocumentRoot /var/www/html/kimkelen@' /etc/apache2/apache2.conf
+
+
+# Map www-data uid to specified USER_ID. If no specified, uid 33 will be used
+if [ ! -z "$USER_ID" ]; then
+  usermod -u $USER_ID $USER
+fi
+
+# Create base directory where application code will be downloaded
+[ -d "$CODE" ] || mkdir -p $CODE
+
+# Create shared directories in specified volume
+for i in $SHARED_DIRS; do
+  dir=$DATA/$i
+  [ -d "$dir" ] || mkdir -p $dir
+done
+
+# Create shared files destination directories in specified volume
+for i in $SHARED_FILES; do
+  dir=`dirname $DATA/$i`
+  [ -d "$dir" ] || mkdir -p $dir
+done
+
+
+# If specify revision is not cloned yet try to clone it
+if [ ! "$(ls -A $CODE)" ]; then
+  git clone -b $GIT_REVISION $GIT_REPO $CODE
+  cd $CODE
+  rm -fr $SHARED_DIRS $SHARED_FILES
+  for i in $SHARED_DIRS $SHARED_FILES; do
+    dst=$DATA/$i
+    ln -s $dst $i
+  done
+  chown -R $USER /code
+fi
+
+# Set proper permissions
+chown -R $USER $CODE $DATA
+
+if [ ! -f /data/php.ini ]; then
+  gosu $USER cp $DEFAULT_CONFIGS/php.ini /data/php.ini
+fi
+
+# If container was run without parameters (command) it starts a web server
+if [ $# -eq 0 ]; then
+  for i in config/databases.yml config/propel.ini; do
+    if [ ! -f $CODE/$i ]; then
+      gosu $USER cp $DEFAULT_CONFIGS/`basename $i` $DATA/$i
+      sed -i "s/#db_name#/$DB_NAME/g" $DATA/$i
+      sed -i "s/#db_host#/$DB_HOST/g" $DATA/$i
+      sed -i "s/#db_user#/$DB_USER/g" $DATA/$i
+      sed -i "s/#db_pass#/$DB_PASS/g" $DATA/$i
+    fi
+  done
+
+  if [ ! $CODE/config/app.yml ]; then
+    gosu $USER cp $DEFAULT_CONFIGS/app.yml $DATA/config/app.yml
+  fi
+
+
+
+  if [ ! -d $CODE/lib/model/om -o ! "$(ls -A $CODE/lib/model/om 2> /dev/null)" ]; then
+    cd $CODE
+    PHP symfony propel:build-model
+    PHP symfony propel:build-filters
+    PHP symfony propel:build-forms
+    PHP symfony plugin:publish-assets
+    PHP symfony propel:build-all-load
+  fi
+
+  if [ ! -f $CODE/config/nc_flavor.yml ]; then
+    cd $CODE
+    PHP symfony kimkelen:flavor $FLAVOR
+  fi
+
+  cd $CODE
+  PHP symfony cc
+  chown -R $USER $CODE $DATA
+  apache2-foreground
+else
+  #try to run specifyed command
+  cd $CODE
+
+  # When symfony is called, wrap it with php 
+  if [ "$1" = "symfony" ];then
+    exec gosu $USER $PHP_CMD $@
+  fi
+
+  # Else try to execute command
+  exec gosu $USER "$@"
+fi
+
