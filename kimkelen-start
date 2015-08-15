@@ -11,13 +11,14 @@ SHARED_FILES="config/propel.ini config/databases.yml config/nc_flavor.yml"
 FLAVOR=${FLAVOR:-demo}
 DB_NAME=${DB_NAME:-kimkelen_docker}
 DB_HOST=${DB_HOST:-`ip route | awk '/default/ { print  $3}'`}
-DB_USER=${DB_HOST:-root}
+DB_USER=${DB_USER:-root}
 DB_PASS=${DB_PASS:-""}
 
 PHP() {
   gosu $USER $PHP_CMD $*
 }
 
+# Make services configurations available inside /data volume
 ln -fs $CODE /code/current
 ln -fs /data/php.ini /usr/local/etc/php/php.ini
 ln -fs /code/current/web /var/www/html/kimkelen
@@ -27,6 +28,15 @@ sed -i.bak 's@DocumentRoot .*@DocumentRoot /var/www/html/kimkelen@' /etc/apache2
 # Map www-data uid to specified USER_ID. If no specified, uid 33 will be used
 if [ ! -z "$USER_ID" ]; then
   usermod -u $USER_ID $USER
+fi
+
+if [ "$1" = "--reinstall" ]; then
+  rm -fr $CODE
+  # Remove shared files
+  for i in $SHARED_FILES; do
+    file=$DATA/$i
+    rm -fr $file
+  done
 fi
 
 # Create base directory where application code will be downloaded
@@ -65,7 +75,7 @@ if [ ! -f /data/php.ini ]; then
 fi
 
 # If container was run without parameters (command) it starts a web server
-if [ $# -eq 0 ]; then
+if [ $# -eq 0 -o "$1" = "--reinstall" ]; then
   for i in config/databases.yml config/propel.ini; do
     if [ ! -f $CODE/$i ]; then
       gosu $USER cp $DEFAULT_CONFIGS/`basename $i` $DATA/$i
@@ -99,7 +109,10 @@ if [ $# -eq 0 ]; then
   cd $CODE
   PHP symfony cc
   chown -R $USER $CODE $DATA
-  apache2-foreground
+
+  if [ "$1" != "--reinstall" ]; then
+    apache2-foreground
+  fi
 else
   #try to run specifyed command
   cd $CODE

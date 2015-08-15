@@ -55,6 +55,38 @@ del comando anterior especifican:
 Una vez completado el comando anterior, quedará funcionando kimkelen en el
 puerto 8000.
 
+### Reinstalando kimkelen
+
+Si se desea reinstalar la versión de kimklen y/o reconfigurarlo, es posible
+correr el contenedor con el comando  siguiente:
+
+```
+docker run \
+    -e USER_ID=`id -u` \
+    -e DB_NAME=kimkelen \
+    -e DB_USER=kimkelen \
+    -e DB_PASS=muysecreta \
+    -v /tmp/kimkelen/codigo:/code \
+    -v /tmp/kimkelen/data:/data \
+    -p 8000:80 \
+    -it
+    cespi/kimkelen --reinstall
+``` 
+
+Este comando lo que hace es:
+
+* Reinstala la versión específica de kimkelen (la indicada por GIT_REVISION)
+* Recrea los archivos:
+  * `config/propel.ini`
+  * `config/databases.yml`
+  * `config/nc_flavor.yml`
+
+Notar que no utilizamos `--name` y utilizamos `--rm`. Esto lo que hace es crear
+un nuevo contenedor que solo actualizará los mismos volumenes que utiliza el
+contenedor kimkelen. 
+
+Al utilizar `--reinstall` *no se inicia el web server*
+
 
 ## Iniciar y parar el contenedor
 
