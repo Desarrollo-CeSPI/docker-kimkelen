@@ -13,11 +13,11 @@ curl -sSL https://get.docker.com/ | sh
 Para otros sistemas verificar la [Guía de instalación de
 Docker](https://docs.docker.com/installation/)
 
-## Probando kimkelen
+# Probando kimkelen
 
 Si no se quiere leer todo este README y simplemente probar kimkelen rápidamente:
 
-###Iniciamos un contenedor con MySQL:
+##Iniciamos un contenedor con MySQL:
 
 ```
 docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
@@ -25,7 +25,7 @@ docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
   -e MYSQL_PASSWORD=kimpass -d mysql:5.5
 ```
 
-### Iniciamos un contenedor con kimkelen ligado al MySQL creado
+## Iniciamos un contenedor con kimkelen ligado al MySQL creado
 
 ```
 docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
@@ -36,9 +36,14 @@ docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
 
 Luego accceder http://localhost:8000
 
-## Instalar el contenedor de kimkelen
+# Instalar el contenedor de kimkelen
 
-Correr por única vez:
+A continuación se explica en detalle lo que se mostró anteriormente. Si se tiene
+corriendo un contenedor llamado *kimkelen* el siguiente comando dará error
+porque ya se creó una instancia con ese nombre. Deberá pararla y elimianrla
+antes de proceder
+
+Para iniciar un contenedor con kimkelen se utiliza el comando:
 
 ```
 docker run \
