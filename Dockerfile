@@ -25,14 +25,20 @@ RUN apt-get update && apt-get install -y \
 # git cli
 RUN apt-get update && apt-get install -y git-core && rm -rf /var/lib/apt/lists/*
 
+# Default GIT information
 ENV GIT_REPO  https://github.com/Desarrollo-CeSPI/kimkelen.git
 ENV GIT_REVISION master
+
+# Upload default configurations
 RUN mkdir /default_configs
 
 COPY sample-app.yml /default_configs/app.yml
 COPY sample-php.ini /default_configs/php.ini
 COPY sample-databases.yml /default_configs/databases.yml
 COPY sample-propel.ini /default_configs/propel.ini
+
+# Enable apache rewrite module
+RUN a2enmod rewrite
 
 
 VOLUME ["/code", "/data"]
