@@ -134,7 +134,7 @@ docker run \
     -v /tmp/kimkelen/data:/data \
     -it \
     --rm \
-    -entrypoint=bash \
+    --entrypoint=bash \
     cespi/kimkelen
 ```
 
