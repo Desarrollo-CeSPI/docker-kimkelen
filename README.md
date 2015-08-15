@@ -202,3 +202,10 @@ definiendo la variable *GIT_REVISION* de la siguiente forma:
     -e GIT_REVISION=v2.19.4
 ```
 
+## Actualizando el contenedor
+
+Para obtener la última versión de esta imagen, correr: 
+
+```
+docker pull cespi/kimkelen
+```
