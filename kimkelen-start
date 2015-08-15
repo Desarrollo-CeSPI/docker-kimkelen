@@ -9,10 +9,10 @@ USER=www-data
 SHARED_DIRS="log web/uploads data/persons-photos data/justification-documents data/disciplinary-sanction-documents"
 SHARED_FILES="config/propel.ini config/databases.yml config/nc_flavor.yml"
 FLAVOR=${FLAVOR:-demo}
-DB_NAME=kimkelen_docker
-DB_HOST=`ip route | awk '/default/ { print  $3}'`
-DB_USER=root
-DB_PASS=""
+DB_NAME=${DB_NAME:-kimkelen_docker}
+DB_HOST=${DB_HOST:-`ip route | awk '/default/ { print  $3}'`}
+DB_USER=${DB_HOST:-root}
+DB_PASS=${DB_PASS:-""}
 
 PHP() {
   gosu $USER $PHP_CMD $*
