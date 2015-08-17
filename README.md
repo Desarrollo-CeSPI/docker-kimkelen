@@ -32,7 +32,7 @@ docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
 docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
   -e DB_PASS=kimpass -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
   -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql  \
-  -p 8000:80  -it cespi/kimkelen
+  -p 8000:80 -it cespi/kimkelen
 ```
 
 ## Acceder al sistema
@@ -58,8 +58,7 @@ docker run \
     -v /tmp/kimkelen/data:/data \
     --name=kimkelen \
     -p 8000:80 \
-    -it
-    cespi/kimkelen
+    -it cespi/kimkelen
 ```
 
 Esto creará el contenedor que instala la última versión de Kimkelen. Las opciones
