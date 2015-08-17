@@ -37,7 +37,10 @@ docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
 
 ## Acceder al sistema
 
-El mismo estará disponible ingresando a la URL: http://localhost:8000
+El mismo estará disponible ingresando a la URL: http://localhost:8000. Para
+información acerca de los datos precargados (incluyendo usuario y contraseña de
+acceso) referirse a la sección Datos Iniciales en el [README de
+Kimkelen](https://github.com/Desarrollo-CeSPI/kimkelen).
 
 # Guía detallada
 
