@@ -31,7 +31,7 @@ docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
 ```
 docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
   -e DB_PASS=kimpass -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
-  -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql  \
+  -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql \
   -p 8000:80 -it cespi/kimkelen
 ```
 
@@ -39,8 +39,8 @@ docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
 
 El mismo estará disponible ingresando a la URL: http://localhost:8000. Para
 información acerca de los datos precargados (incluyendo usuario y contraseña de
-acceso) referirse a la sección Datos Iniciales en el [README de
-Kimkelen](https://github.com/Desarrollo-CeSPI/kimkelen).
+acceso) referirse a la sección _Datos iniciales_ en el [README de
+Kimkelen](https://github.com/Desarrollo-CeSPI/kimkelen#datos-iniciales-1).
 
 # Guía detallada
 
