@@ -13,6 +13,11 @@ DB_NAME=${DB_NAME:-kimkelen_docker}
 DB_HOST=${DB_HOST:-`ip route | awk '/default/ { print  $3}'`}
 DB_USER=${DB_USER:-root}
 DB_PASS=${DB_PASS:-""}
+DEMO_DUMP="https://github.com/Desarrollo-CeSPI/docker-kimkelen/raw/master/demo_dump.sql"
+MYSQL="mysql -u $DB_USER -h $DB_HOST $DB_NAME"
+if [ ! -z "$DB_PASS" ]; then
+  MYSQL="$MYSQL -p$DB_PASS"
+fi
 
 PHP() {
   gosu $USER $PHP_CMD $*
@@ -75,7 +80,7 @@ if [ ! -f /data/php.ini ]; then
 fi
 
 # If container was run without parameters (command) it starts a web server
-if [ $# -eq 0 -o "$1" = "--reinstall" ]; then
+if [ $# -eq 0 -o "$1" = "--demo" -o "$1" = "--reinstall" ]; then
   for i in config/databases.yml config/propel.ini; do
     if [ ! -f $CODE/$i ]; then
       gosu $USER cp $DEFAULT_CONFIGS/`basename $i` $DATA/$i
@@ -98,8 +103,18 @@ if [ $# -eq 0 -o "$1" = "--reinstall" ]; then
     PHP symfony propel:build-filters
     PHP symfony propel:build-forms
     PHP symfony plugin:publish-assets
-    PHP symfony propel:build-all-load
   fi
+
+  TABLES=`echo "show tables; SELECT FOUND_ROWS();" | $MYSQL | tail -1`
+  if [ "$1" = "--reinstall" -o "$TABLES" -eq 0 ]; then
+    cd $CODE
+    PHP symfony propel:build-all-load --no-confirmation
+  fi
+
+  if [ "$1" = "--demo" ]; then
+      curl -L $DEMO_DUMP | $MYSQL
+  fi
+
 
   if [ ! -f $CODE/config/nc_flavor.yml ]; then
     cd $CODE
@@ -110,9 +125,7 @@ if [ $# -eq 0 -o "$1" = "--reinstall" ]; then
   PHP symfony cc
   chown -R $USER $CODE $DATA
 
-  if [ "$1" != "--reinstall" ]; then
-    apache2-foreground
-  fi
+  apache2-foreground
 else
   #try to run specifyed command
   cd $CODE

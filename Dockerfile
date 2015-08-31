@@ -25,6 +25,9 @@ RUN apt-get update && apt-get install -y \
 # git cli
 RUN apt-get update && apt-get install -y git-core && rm -rf /var/lib/apt/lists/*
 
+# mysql-client
+RUN apt-get update && apt-get install -y mysql-client && rm -rf /var/lib/apt/lists/*
+
 # Default GIT information
 ENV GIT_REPO  https://github.com/Desarrollo-CeSPI/kimkelen.git
 ENV GIT_REVISION master

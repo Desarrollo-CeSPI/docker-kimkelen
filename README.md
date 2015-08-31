@@ -61,7 +61,8 @@ docker run \
     -v /tmp/kimkelen/data:/data \
     --name=kimkelen \
     -p 8000:80 \
-    -it cespi/kimkelen
+    -d \
+    cespi/kimkelen
 ```
 
 Esto creará el contenedor que instala la última versión de Kimkelen. Las opciones
@@ -81,44 +82,14 @@ del comando anterior especifican:
 * *Mapeo de puertos:* el contenedor escuchará en el puerto 8000, mapeando este
   puerto al 80 del contenedor. Esto significa que Kimkelen quedará accesible
   directamente en el puerto 8000 de la máquina donde se corre Docker.
-* *Correr en modo interactivo:* las opciones `-it` corren el contenedor en modo
-  interactivo y permiten así responder a la única interacción del instalador: si
-  se desea reinicializar la base de datos.
+* *Correr en modo interactivo o detached:* las opciones `-it` corren el contenedor en modo
+  interactivo y permiten así cancelar la ejecución del contenedor con utilizando
+  `Ctrl+C`. Si se desea evitar este modo, omitir las opciones `-it` y utilizar
+  `-d`
 
 Una vez completado el comando anterior, quedará funcionando Kimkelen en el
 puerto 8000.
 
-### Reinstalando Kimkelen
-
-Si se desea reinstalar la versión de Kimklen y/o reconfigurarlo, es posible
-correr el contenedor con el comando siguiente:
-
-```
-docker run \
-    -e USER_ID=`id -u` \
-    -e DB_NAME=kimkelen \
-    -e DB_USER=kimkelen \
-    -e DB_PASS=muysecreta \
-    -v /tmp/kimkelen/codigo:/code \
-    -v /tmp/kimkelen/data:/data \
-    -p 8000:80 \
-    -it \
-    cespi/kimkelen --reinstall
-``` 
-
-Este comando lo que hace es:
-
-* Reinstala la versión específica de Kimkelen (la indicada por GIT_REVISION)
-* Vuelve a crear los archivos:
-  * `config/propel.ini`
-  * `config/databases.yml`
-  * `config/nc_flavor.yml`
-
-Notar que no utilizamos `--name` y utilizamos `--rm`. Esto lo que hace es crear
-un nuevo contenedor que sólo actualizará los mismos volúmenes que utiliza el
-contenedor Kimkelen. 
-
-Al utilizar `--reinstall` *no se inicia el web server*.
 
 ## Usar MySQL en un contenedor
 
@@ -209,6 +180,60 @@ variable de ambiente *USER_ID*.
 
 ## Interacción con el contenedor
 
+### Reinstalando Kimkelen
+
+Si se desea reinstalar la versión de Kimklen y/o reconfigurarlo, es posible
+correr el contenedor con el comando siguiente:
+
+```
+docker run \
+    -e USER_ID=`id -u` \
+    -e DB_NAME=kimkelen \
+    -e DB_USER=kimkelen \
+    -e DB_PASS=muysecreta \
+    -v /tmp/kimkelen/codigo:/code \
+    -v /tmp/kimkelen/data:/data \
+    --rm \
+    cespi/kimkelen --reinstall
+``` 
+
+Este comando lo que hace es:
+
+* Reinstala la versión específica de Kimkelen (la indicada por GIT_REVISION)
+* Vuelve a crear los archivos:
+  * `config/propel.ini`
+  * `config/databases.yml`
+  * `config/nc_flavor.yml`
+
+Notar que no utilizamos `--name` y utilizamos `--rm`. Esto lo que hace es crear
+un nuevo contenedor que sólo actualizará los mismos volúmenes que utiliza el
+contenedor Kimkelen. *Asumimos existe un contenedor que ya se encuentra
+corriendo y comparte los volúmenes mencionados*
+
+
+### Version con datos de demo
+
+Para correr una instancia de kimkelen con datos de prueba:
+
+```
+docker run \
+    -e USER_ID=`id -u` \
+    -e DB_NAME=kimkelen \
+    -e DB_USER=kimkelen \
+    -e DB_PASS=muysecreta \
+    -v /tmp/kimkelen/codigo:/code \
+    -v /tmp/kimkelen/data:/data \
+    --rm \
+    cespi/kimkelen --demo
+```
+
+Notar que no utilizamos `--name` y utilizamos `--rm`. Esto lo que hace es crear
+un nuevo contenedor que sólo actualizará los mismos volúmenes que utiliza el
+contenedor Kimkelen. *Asumimos existe un contenedor que ya se encuentra
+corriendo y comparte los volúmenes mencionados*
+
+### Comandos symfony
+
 Este contenedor permite correr comandos Symfony dentro del contenedor de la
 siguiente forma:
 
@@ -222,6 +247,21 @@ docker run \
     cespi/kimkelen \
     symfony #comando#
 ```
+
+*Por ejemplo, para cambiar el estilo visual del contenedor podría usarse:*
+
+```
+docker run \
+    -e USER_ID=`id -u` \
+    -v /tmp/kimkelen/codigo:/code \
+    -v /tmp/kimkelen/data:/data \
+    -it \
+    --rm \
+    cespi/kimkelen \
+    symfony kimkelen:flavor bba
+```
+
+### Acceder a un shell en el contenedor
 
 Si se desea acceder al contenedor utilizando un shell bash como root por ejemplo:
 
