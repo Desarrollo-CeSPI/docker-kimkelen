@@ -232,6 +232,8 @@ un nuevo contenedor que sólo actualizará los mismos volúmenes que utiliza el
 contenedor Kimkelen. *Asumimos existe un contenedor que ya se encuentra
 corriendo y comparte los volúmenes mencionados*
 
+Los datos de acceso en la demo son: usuario *admin* contraseña *admin*
+
 ### Comandos symfony
 
 Este contenedor permite correr comandos Symfony dentro del contenedor de la
