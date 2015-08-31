@@ -1,23 +1,24 @@
 # Imagen docker de Kimkelen 
 
-Simplifica la instalación de kimkelen
+Simplifica la instalación del sistema
+[Kimkelen](git@github.com:Desarrollo-CeSPI/docker-kimkelen.git).
 
 ## Instalar docker
 
-En Ubuntu, la instalación es:
+En Ubuntu ejecutar:
 
 ```
 curl -sSL https://get.docker.com/ | sh
 ```
 
-Para otros sistemas verificar la [Guía de instalación de
-Docker](https://docs.docker.com/installation/)
+Para otros sistemas operativos verificar la [Guía de instalación de
+Docker](https://docs.docker.com/installation/).
 
-# Probando kimkelen
+# Guía de inicio rápido
 
-Si no se quiere leer todo este README y simplemente probar kimkelen rápidamente:
+Si no quiere leer todo este README y simplemente desea probar Kimkelen rápidamente:
 
-##Iniciamos un contenedor con MySQL:
+## Iniciar un contenedor con MySQL:
 
 ```
 docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
@@ -25,25 +26,30 @@ docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
   -e MYSQL_PASSWORD=kimpass -d mysql:5.5
 ```
 
-## Iniciamos un contenedor con kimkelen ligado al MySQL creado
+## Iniciar un contenedor con Kimkelen ligado al MySQL creado
 
 ```
 docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
   -e DB_PASS=kimpass -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
-  -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql  \
-  -p 8000:80  -it cespi/kimkelen
+  -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql \
+  -p 8000:80 -it cespi/kimkelen
 ```
 
-Luego accceder http://localhost:8000
+## Acceder al sistema
 
-# Instalar el contenedor de kimkelen
+El mismo estará disponible ingresando a la URL: http://localhost:8000. Para
+información acerca de los datos precargados (incluyendo usuario y contraseña de
+acceso) referirse a la sección _Datos iniciales_ en el [README de
+Kimkelen](https://github.com/Desarrollo-CeSPI/kimkelen#datos-iniciales-1).
+
+# Guía detallada
 
 A continuación se explica en detalle lo que se mostró anteriormente. Si se tiene
 corriendo un contenedor llamado *kimkelen* el siguiente comando dará error
-porque ya se creó una instancia con ese nombre. Deberá pararla y elimianrla
-antes de proceder
+porque ya se creó una instancia con ese nombre. Deberá pararla y eliminarla
+antes de seguir adelante.
 
-Para iniciar un contenedor con kimkelen se utiliza el comando:
+Para iniciar un contenedor con Kimkelen se utiliza el comando:
 
 ```
 docker run \
@@ -55,38 +61,37 @@ docker run \
     -v /tmp/kimkelen/data:/data \
     --name=kimkelen \
     -p 8000:80 \
-    -it
-    cespi/kimkelen
+    -it cespi/kimkelen
 ```
 
-Esto creará el contenedor que instala la última versión de kimkelen. Las opcones
+Esto creará el contenedor que instala la última versión de Kimkelen. Las opciones
 del comando anterior especifican:
 
 * *USER_ID:* el usuario con el que correrá la aplicación. En el ejemplo coincide
-  con el usuario que ejecuta el comando
-* *DB_XXX:* datos de conexión a la base de datos. La primera vez que se ejecura
-  el comando, configura la DB con estos datos
-* *Mapeo de volúmenes:* los datos del contenedor se manejan en dos volumenes
-  docker:
-  * `/code`: mantiene las distintas versiones de kimekelen
+  con el usuario que ejecuta el comando.
+* *DB_XXX:* datos de conexión a la base de datos. La primera vez que se ejecuta
+  el comando, configura la DB con estos datos.
+* *Mapeo de volúmenes:* los datos del contenedor se manejan en dos volúmenes
+  Docker:
+  * `/code`: mantiene las distintas versiones de Kimekelen.
   * `/data`: mantiene los datos persistentes comunes a las diferentes versiones
-    de kimkelen instaladas: uploads de archivos, configuraciones, logs, etc
+    de Kimkelen instaladas: uploads de archivos, configuraciones, logs, etc.
 * *Nombre del contenedor:* el contenedor en este caso se llamará kimkelen y nos
-  permitirá referenciarlo fácilmente en otros comandos docker
+  permitirá referenciarlo fácilmente en otros comandos Docker.
 * *Mapeo de puertos:* el contenedor escuchará en el puerto 8000, mapeando este
-  puerto al 80 del contenedor. Esto significa que kimkelen quedará accesible
-  directamente en el puerto 8000 de la máquina donde se corre docker
-* *Correr en modo intereactivo:* las opciones `-it` corren el contenedor en modo
-  interactivo y así responder a la única interacción del instalador: si se desea
-  reinicializar la base de datos.
+  puerto al 80 del contenedor. Esto significa que Kimkelen quedará accesible
+  directamente en el puerto 8000 de la máquina donde se corre Docker.
+* *Correr en modo interactivo:* las opciones `-it` corren el contenedor en modo
+  interactivo y permiten así responder a la única interacción del instalador: si
+  se desea reinicializar la base de datos.
 
-Una vez completado el comando anterior, quedará funcionando kimkelen en el
+Una vez completado el comando anterior, quedará funcionando Kimkelen en el
 puerto 8000.
 
-### Reinstalando kimkelen
+### Reinstalando Kimkelen
 
-Si se desea reinstalar la versión de kimklen y/o reconfigurarlo, es posible
-correr el contenedor con el comando  siguiente:
+Si se desea reinstalar la versión de Kimklen y/o reconfigurarlo, es posible
+correr el contenedor con el comando siguiente:
 
 ```
 docker run \
@@ -103,21 +108,21 @@ docker run \
 
 Este comando lo que hace es:
 
-* Reinstala la versión específica de kimkelen (la indicada por GIT_REVISION)
-* Recrea los archivos:
+* Reinstala la versión específica de Kimkelen (la indicada por GIT_REVISION)
+* Vuelve a crear los archivos:
   * `config/propel.ini`
   * `config/databases.yml`
   * `config/nc_flavor.yml`
 
 Notar que no utilizamos `--name` y utilizamos `--rm`. Esto lo que hace es crear
-un nuevo contenedor que solo actualizará los mismos volumenes que utiliza el
-contenedor kimkelen. 
+un nuevo contenedor que sólo actualizará los mismos volúmenes que utiliza el
+contenedor Kimkelen. 
 
-Al utilizar `--reinstall` *no se inicia el web server*
+Al utilizar `--reinstall` *no se inicia el web server*.
 
-## Usar mysql en un contenedor
+## Usar MySQL en un contenedor
 
-Podemos correr mysql en un contenedor de la siguiente forma 
+Podemos correr MySQL en un contenedor de la siguiente forma:
 
 ```
 docker run \
@@ -129,7 +134,7 @@ docker run \
   -d mysql:5.5 
 ```
 
-Una vez corriendo, debemos iniciar nuestra instancia de kimkelen de esta forma:
+Una vez corriendo, debemos iniciar nuestra instancia de Kimkelen de esta forma:
 
 ```
 docker run \
@@ -147,67 +152,64 @@ docker run \
     cespi/kimkelen
 ```
 
-
-*Si ya estaba existe un contenedor docker con el nombre kimkelen, deberá antes
+*Si ya existía un contenedor Docker con el nombre kimkelen, deberá antes
 pararlo y eliminarlo: `docker stop kimkelen && docker rm kimkelen`*
 
 
 ## Iniciar y parar el contenedor
 
 Una vez creado el contenedor como se explica en el punto anterior, se está
-creando un contenedor *nombrado kimkelen*. Este nombre podemos usarlo para:
+creando un contenedor *llamado kimkelen*. Este nombre podemos usarlo para:
 
-* *Parar el conentedor:* `docker stop kimkelen`
-* *Iniciar el conentedor:* `docker start kimkelen`
-* *Ver los logs:* `docker logs -f kimkelen`
+* *Parar el conentedor:* `docker stop kimkelen`.
+* *Iniciar el conentedor:* `docker start kimkelen`.
+* *Ver los logs:* `docker logs -f kimkelen`.
 
-## La conexión a la base de datos
+## Conexión a la base de datos
 
 Dado que el contenedor corre en un segmento de red diferente, la base de datos
 deberá admitir conexiones desde la red. Es por ello que si existen problemas de
-conexión  a la base de datos, deberá verificar que la configuración sea la adecuada:
+conexión a la base de datos, deberá verificar que la configuración sea la adecuada:
 
 * Que los datos de nombre de base de datos, host, usuario y contraseña sean los
-  esperados
-  * Los archivos de configuración pueden verse en el volumen montado por docker
-    bajo `data/config/`
-* Que se disponga de permisos para conectarse desde la red de docker
+  esperados.
+  * Los archivos de configuración pueden verse en el volumen montado por Docker
+    bajo `data/config/`.
+* Que se disponga de permisos para conectarse desde la red de Docker.
   * Si el problema es de permisos accediendo desde otro host, verificar que:
-    * El servidor de mysql esté escuchando en un puerto válido (no en 127.0.0.1)
-    * Que el usuario tenga permisos de acceso: 
+    * El servidor de MySQL esté escuchando en una IP válida (no en 127.0.0.1).
+    * Que el usuario tenga permisos de acceso:
 
 ```
 GRANT ALL PRIVILEGES ON kimkelen_docker.* to kimkelen@'%' identidied by 'muysecreta';`
 ```
 
+## Los volúmenes
 
-## Los volumenes
+El contenedor de Kimkelen provee dos volúmenes:
 
-El contenedor de kimkelen provee dos volumenes:
-
-* `code/`: donde se almacenan las diferentes versiones de kimkelen que se vayan
-  actualizando. El directorio contendrá las distintas versiones que vayan
-descargándose. Ver *GIT_REVISION*. 
-* `data/`: configuraciones y datos persisntentes entre las diferentes
+* `code/`: donde se almacenan las diferentes versiones de Kimkelen. El directorio
+  contendrá las distintas versiones que vayan descargándose. Ver *GIT_REVISION*. 
+* `data/`: configuraciones y datos persistentes entre las diferentes
   versiones instaladas. Aquí se mantienen:
-  * `data/php.ini`: configuración de PHP
-  * `data/config/databases.yml`: configuración de la base de datos
-  * `data/config/propel.ini`: configuración de la base de datos
-  * `data/config/app.yml`: configuración de la aplicación básica
-  * `data/data/`: datos donde se almacenan documentos subidos al sistema
-  * `data/log/`: logs de la aplicación symfony (no del web server)
-  * `data/web/uploads`: otros uploads de la aplicación
+  * `data/php.ini`: configuración de PHP.
+  * `data/config/databases.yml`: configuración de la base de datos.
+  * `data/config/propel.ini`: configuración de la base de datos.
+  * `data/config/app.yml`: configuración de la aplicación básica.
+  * `data/data/`: datos donde se almacenan documentos subidos al sistema.
+  * `data/log/`: logs de la aplicación Symfony (no del web server).
+  * `data/web/uploads`: otros uploads de la aplicación.
 
-Un volumen en docker, permite peristir los datos del contenedor. Para más
+Un volumen en docker, permite persistir los datos del contenedor. Para más
 información ver [la sección de Volúmenes del
-manual](https://docs.docker.com/userguide/dockervolumes/)
+manual](https://docs.docker.com/userguide/dockervolumes/).
 
 La aplicación podrá correrse con un usuario estándar si se especifica la
-variable de ambiente *USER_ID*
+variable de ambiente *USER_ID*.
 
 ## Interacción con el contenedor
 
-Este contenedor permite correr comandos symfony dentro del contenedor de la
+Este contenedor permite correr comandos Symfony dentro del contenedor de la
 siguiente forma:
 
 ```
@@ -236,19 +238,21 @@ docker run \
 
 ## Opciones al correr el contenedor
 
-El contenedor mínimamente deberá definir el puerto en el que correrá
+El contenedor mínimamente deberá definir el puerto en el que ejecutará el
+servicio.
 
 ### Definir el puerto
 
 Se exponen los puertos 80 y 443. La forma de asociar estos puertos con puertos
 de la máquina local es con la opción `-d PTO_LOCAL:PTO_DESTINO`, por ejemplo `-d
-8000:80` indica que al acceder al puerto 8000 de la pc donde se corre el
-contenedor redireccionará a kimkelen
+8000:80` indica que al acceder al puerto 8000 de la PC donde se corre el
+contenedor redireccionará al puerto 80 del contenedor, donde se encuentra
+ejecutando Kimkelen.
 
 ### Definir los volúmnes
 
-Pueden utilizarse volúmenes que maneja docker o directorios de la PC donde se
-correrá docker. Si se utiliza la opción:
+Pueden utilizarse volúmenes que maneja Docker o directorios de la PC donde se
+ejecuta Docker. Si se utiliza la opción:
 
 ```
     -v `pwd`/code:/code -v `pwd`/data:/data
@@ -256,7 +260,7 @@ correrá docker. Si se utiliza la opción:
 
 Estamos asociando los directorios `/code` y `/data` del contenedor con dos
 directorios de la PC local ubicados en el directorio actual (por ello pwd) con
-los mismos nombres respectivamente
+los mismos nombres respectivamente.
 
 ### Especificar el usuario USER_ID
 
@@ -265,14 +269,14 @@ realizan con el usuario www-data que en Debian es el UID 33. Esto nos complicar�
 la interacción con las configuraciones alojadas en los volúmenes dado que necesitaremos
 privilegios de root para modificar estos archivos.
 Para simplificar esta cuestión, se provee la posibilidad de indicar con qué UID
-deberá correr kimkelen. Esto es posible con la opción `-e USER_ID=1000` o por
+deberá correr Kimkelen. Esto es posible con la opción `-e USER_ID=1000` o por
 ejemplo
 
 ```
     -e USER_ID=`id -u`
 ```
 
-Que seteará esta variable al UID del usuario actual
+Que seteará esta variable al UID del usuario actual.
 
 ### Datos de conexión a la base de datos
 
@@ -286,13 +290,13 @@ forma:
 ```
 
 *Es importante destacar que una vez creados los archivos `config/databases.yml`
-y `config/propel.ini` estas variables serán ignoradas. Si se desea recrear estos
-archivos deberá eliminarlos y volver a correr el contenedor*
+y `config/propel.ini` estas variables serán ignoradas. Si se desea volver a
+crear estos archivos deberá eliminarlos y ejecutar nuevamente el contenedor*.
 
-### Definir la versión de kimkelen: GIT_REVISION
+### Definir la versión de Kimkelen: GIT_REVISION
 
-El contenedor instalará la versión master, pero puede cambiarse este hecho
-definiendo la variable *GIT_REVISION* de la siguiente forma:
+El contenedor instalará la versión disponible en Master, pero puede cambiarse
+por otra definiendo la variable *GIT_REVISION* de la siguiente forma:
 
 ```
     -e GIT_REVISION=v2.19.4
@@ -300,7 +304,7 @@ definiendo la variable *GIT_REVISION* de la siguiente forma:
 
 ## Actualizando el contenedor
 
-Para obtener la última versión de esta imagen, correr: 
+Para obtener la última versión de esta imagen ejecutar: 
 
 ```
 docker pull cespi/kimkelen
