@@ -23,14 +23,14 @@ Si no quiere leer todo este README y simplemente desea probar Kimkelen rápidame
 ```
 docker run --name=mysql-kimkelen -e MYSQL_ROOT_PASSWORD=rootpass \
   -e MYSQL_DATABASE=kimkelen -e MYSQL_USER=kimkelen \
-  -e MYSQL_PASSWORD=kimpass -d mysql:5.5
+  -e MYSQL_PASSWORD=muysecreta -d mysql:5.5
 ```
 
 ## Iniciar un contenedor con Kimkelen ligado al MySQL creado
 
 ```
 docker run -e USER_ID=`id -u` -e DB_NAME=kimkelen -e DB_USER=kimkelen \
-  -e DB_PASS=kimpass -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
+  -e DB_PASS=muysecreta -e DB_HOST=mysql -v /tmp/kimkelen/codigo:/code \
   -v /tmp/kimkelen/data:/data --name=kimkelen --link mysql-kimkelen:mysql \
   -p 8000:80 -it cespi/kimkelen
 ```
@@ -101,7 +101,7 @@ docker run \
   -e MYSQL_ROOT_PASSWORD=rootpass \
   -e MYSQL_DATABASE=kimkelen \
   -e MYSQL_USER=kimkelen \
-  -e MYSQL_PASSWORD=kimpass \
+  -e MYSQL_PASSWORD=muysecreta \
   -d mysql:5.5 
 ```
 
@@ -112,7 +112,7 @@ docker run \
     -e USER_ID=`id -u` \
     -e DB_NAME=kimkelen \
     -e DB_USER=kimkelen \
-    -e DB_PASS=kimpass \
+    -e DB_PASS=muysecreta \
     -e DB_HOST=mysql \
     -v /tmp/kimkelen/codigo:/code \
     -v /tmp/kimkelen/data:/data \
