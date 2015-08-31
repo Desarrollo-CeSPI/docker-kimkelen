@@ -61,7 +61,7 @@ docker run \
     -v /tmp/kimkelen/data:/data \
     --name=kimkelen \
     -p 8000:80 \
-    -d \
+    -it \
     cespi/kimkelen
 ```
 
@@ -284,7 +284,7 @@ servicio.
 ### Definir el puerto
 
 Se exponen los puertos 80 y 443. La forma de asociar estos puertos con puertos
-de la máquina local es con la opción `-d PTO_LOCAL:PTO_DESTINO`, por ejemplo `-d
+de la máquina local es con la opción `-p PTO_LOCAL:PTO_DESTINO`, por ejemplo `-d
 8000:80` indica que al acceder al puerto 8000 de la PC donde se corre el
 contenedor redireccionará al puerto 80 del contenedor, donde se encuentra
 ejecutando Kimkelen.
